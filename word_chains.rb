@@ -15,9 +15,9 @@ class WordChainer
 
     word_arr = word.split("")
 
-    right_length = @dictionary.select! { |dict_word| dict_word.length == word.length }
+    @dictionary.keep_if { |dict_word| dict_word.length == word.length }
 
-    right_length.each do |word|
+    @dictionary.each do |word|
       i = 0
 
       word.split("").each_with_index do |char, index|
@@ -32,29 +32,36 @@ class WordChainer
     adjacents
   end
 
-  def run(source, target)
-    @current_words = [source]
-    @all_seen_words = [source]
-    until @current_words.empty?
-      new_current_words = []
+  def explore_current_words
+    new_current_words = []
 
-      @current_words.each do |word|
+    @current_words.each do |word|
 
-        adjacent_words(word).each do |adj_word|
-          next if @all_seen_words.include?(adj_word)
-          new_current_words << adj_word
-          @all_seen_words << adj_word
-        end
-
+      adjacent_words(word).each do |adj_word|
+        next if @all_seen_words.include?(adj_word)
+        new_current_words << adj_word
+        @all_seen_words[adj_word] = word
       end
 
-      p new_current_words
+    end
 
-      @current_words = new_current_words
+    new_current_words.each do |word|
+      p "word: #{word}. word it came from: #{@all_seen_words[word]}"
+    end
+
+    @current_words = new_current_words
+  end
+
+  def run(source, target)
+    @current_words = [source]
+    @all_seen_words = { source => nil}
+
+    until @current_words.empty?
+      explore_current_words
     end
   end
 end
 
 my_chainer = WordChainer.new("dictionary.txt")
 
-p my_chainer.run("frog", "parked")
+p my_chainer.run("market", "parked")
