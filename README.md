@@ -1,0 +1,1 @@
+This is a small program that finds the shortest path between two words, written as part of App Academy.
