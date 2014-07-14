@@ -45,23 +45,35 @@ class WordChainer
 
     end
 
-    new_current_words.each do |word|
-      p "word: #{word}. word it came from: #{@all_seen_words[word]}"
-    end
+    # new_current_words.each do |word|
+#       p "word: #{word}. word it came from: #{@all_seen_words[word]}"
+#     end
 
     @current_words = new_current_words
   end
+
+  def build_path(target, path = [target])
+
+    return path if @all_seen_words[target] == nil
+
+    path << @all_seen_words[target]
+
+    self.build_path(@all_seen_words[target], path)
+  end
+
 
   def run(source, target)
     @current_words = [source]
     @all_seen_words = { source => nil}
 
-    until @current_words.empty?
+    until @all_seen_words.has_key?(target)
       explore_current_words
     end
+
+    self.build_path(target)
   end
 end
 
 my_chainer = WordChainer.new("dictionary.txt")
 
-p my_chainer.run("market", "parked")
+p my_chainer.run("market", "toilet")
