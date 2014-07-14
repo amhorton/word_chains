@@ -4,9 +4,11 @@ class WordChainer
 
   def initialize(dictionary_file_name)
     @dictionary = []
+
     File.foreach(dictionary_file_name) do |line|
       @dictionary << line.chomp
     end
+
     @dictionary = @dictionary.to_set
   end
 
@@ -39,15 +41,13 @@ class WordChainer
 
       adjacent_words(word).each do |adj_word|
         next if @all_seen_words.include?(adj_word)
+
         new_current_words << adj_word
+
         @all_seen_words[adj_word] = word
       end
 
     end
-
-    # new_current_words.each do |word|
-#       p "word: #{word}. word it came from: #{@all_seen_words[word]}"
-#     end
 
     @current_words = new_current_words
   end
@@ -61,7 +61,6 @@ class WordChainer
     self.build_path(@all_seen_words[target], path)
   end
 
-
   def run(source, target)
     @current_words = [source]
     @all_seen_words = { source => nil}
@@ -73,7 +72,3 @@ class WordChainer
     self.build_path(target)
   end
 end
-
-my_chainer = WordChainer.new("dictionary.txt")
-
-p my_chainer.run("market", "toilet")
